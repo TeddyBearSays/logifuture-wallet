@@ -25,8 +25,8 @@ public class Transaction
             {
                 builder.Append(b.ToString("x2"));
             }
-            return builder.ToString();
+            Id= builder.ToString();
         }
-        Id= CalculateHash();
+       
     }
 }
