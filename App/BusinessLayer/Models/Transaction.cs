@@ -14,7 +14,7 @@ public class Transaction
     public Guid ProviderId { get; internal set; }
     public bool Commited { get; internal set; }
 
-    public string CalculateHash()
+    public void CalculateHash()
     {
         using (SHA256 sha256 = SHA256.Create())
         {
