@@ -1,0 +1,8 @@
+@WalletSytem_HostAddress = http://localhost:5077
+@userId = 41e8570c-8421-4713-9b14-9054ad23cf5d
+@walletId = a62c7db0-35fe-4630-86d2-8b1f6f56e792
+
+POST {{WalletSytem_HostAddress}}/{userId}/{walletId}/
+Accept: application/json
+
+###

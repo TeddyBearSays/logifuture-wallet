@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wallet-api-deployment
+  labels:
+    app: wallet-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wallet-api
+  template:
+    metadata:
+      labels:
+        app: wallet-api
+    spec:
+      containers:
+        - name: wallet-api
+          image: bet-api/wallet-api:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wallet-api-service
+spec:
+  selector:
+    app: wallet-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
