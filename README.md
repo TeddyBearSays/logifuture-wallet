@@ -65,4 +65,4 @@ Auto service scaling can performed via Kubernetes claster configuration  (3-5 in
 kubectl apply -f api-deployment.yaml
 kubectl apply -f hpa.yaml
 ```
-kubectl apply -f hpa.yaml
+
