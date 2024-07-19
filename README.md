@@ -7,13 +7,16 @@ In a real-world app, it should be either a cloud-based SQL server or self-hosted
 
 Service doesn't have Auth and permissions validation logic to simplify the logic
 
+The service doesn't have Logging logic to simplify the logic
+
 Service doesn't have Exception handling/Exception conversion Middleware (to provide user-friendly error codes instead of 500 errors)
 
 To not add User controller with Crud operations nonexisting User created during Wallet creation
 
-In the implementation requests processing from all endpoints goes to IWalletService/IWalletRepository to not spend a lot of time on Repo implementations
+
+In the implementation requests processing from all endpoints goes to IWalletService to not spend a lot of time on Service implementations
 but in the final solution Services and Repositories should be created per Domain object
-So Transactions should be managed by TransactionsRepository
+As example: Transactions should be managed by TransactionsRepository
 In the case of user model extension - user management should be performed within the UserRepository
 
 ## Rest endpoints
@@ -21,40 +24,63 @@ In the case of user model extension - user management should be performed within
 There are several rest endpoints to communicate with the service:
 
 Create Wallet:
+POST: http://{host}/api/Wallet?currecny=USD
 ```Rest
-POST
-/api/Wallet - 
-[userId] - string($uuid) User Id(will be created if empty)
-[currecny] - Wallet currency 
+[currecny] - Wallet currency
+{
+  "username": "string",
+  "email": "user@example.com",
+  "passwordHash": "string",
+  "dateCreated": "2024-07-19T07:13:21.133Z"
+}
+```
 
+Example response:
+```
+{
+  "id": 1,
+  "userId": "2d76fadc5c46069f955e4d9572f9beb2e19fe8617f6698ecdce32dddb56912e3",
+  "balance": 0,
+  "currency": "USD",
+  "frozen": false
+}
+```
 
 Get Wallet
-GET
-/api/Wallet/{userId}/{walletId} 
+GET http://{host}/api/Wallet/{userId}/{walletId}
+
 
 
 Get All User Wallets
-GET
-/api/Wallet/{userId}
+GET http://{host}/api/Wallet/{userId}/
 
 
 Add/Remove funds to wallet
-POST
-/api/Wallet/{walletId}/chage-funds
+POST http://{host}/api/Wallet/{userId}/{walletId}/chage-funds
 [Operation] Add/Remove
 [Amount] Amount
 [Timestamp] DateTime of the operation
-
+Example response:
+```
+{
+  "id": 1,
+  "userId": "2d76fadc5c46069f955e4d9572f9beb2e19fe8617f6698ecdce32dddb56912e3",
+  "balance": 54,
+  "currency": "USD",
+  "frozen": false
+}
+```
 
 Get All Wallet transactions
-GET
-"{userId}/{walletId}/transactions
+GET http://{host}/api/Wallet/{userId}/{walletId}/transactions
 
 
 Freeze Wallet
 POST
-"{userId}/{walletId}/transactions
+http://{host}/api/Wallet/{userId}/{walletId}/freeze
 
+Freeze User
+POST http://{host}/api/Wallet/{userId}/freeze
 ```
 
 ## Middleware 
