@@ -61,6 +61,8 @@ Example response:
 [Operation] Add/Remove
 [Amount] Amount
 [Timestamp] DateTime of the operation
+```
+```
 {
   "operation": Add, #Add/Remove
   "amount": 55, 
