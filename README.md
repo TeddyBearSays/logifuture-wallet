@@ -23,8 +23,8 @@ In the case of user model extension - user management should be performed within
 
 There are several rest endpoints to communicate with the service:
 
-Create Wallet:
-POST: http://{host}/api/Wallet?currecny=USD
+### Create Wallet:
+`POST: http://{host}/api/Wallet?currecny=USD`
 ```Rest
 [currecny] - Wallet currency
 {
@@ -46,17 +46,17 @@ Example response:
 }
 ```
 
-Get Wallet
-GET http://{host}/api/Wallet/{userId}/{walletId}
+### Get Wallet
+`GET http://{host}/api/Wallet/{userId}/{walletId}`
 
 
 
-Get All User Wallets
-GET http://{host}/api/Wallet/{userId}/
+### Get All User Wallets
+`GET http://{host}/api/Wallet/{userId}/`
 
 
-Add/Remove funds to wallet
-POST http://{host}/api/Wallet/{userId}/{walletId}/chage-funds
+### Add/Remove funds to wallet
+`POST http://{host}/api/Wallet/{userId}/{walletId}/chage-funds`
 [Operation] Add/Remove
 [Amount] Amount
 [Timestamp] DateTime of the operation
@@ -71,16 +71,15 @@ Example response:
 }
 ```
 
-Get All Wallet transactions
-GET http://{host}/api/Wallet/{userId}/{walletId}/transactions
+### Get All Wallet transactions
+`GET http://{host}/api/Wallet/{userId}/{walletId}/transactions`
 
 
-Freeze Wallet
-POST
-http://{host}/api/Wallet/{userId}/{walletId}/freeze
+### Freeze Wallet
+`POST http://{host}/api/Wallet/{userId}/{walletId}/freeze`
 
-Freeze User
-POST http://{host}/api/Wallet/{userId}/freeze
+### Freeze User
+`POST http://{host}/api/Wallet/{userId}/freeze`
 ```
 
 ## Middleware 
