@@ -57,13 +57,17 @@ Example response:
 
 ### Add/Remove funds to wallet
 `POST http://{host}/api/Wallet/{userId}/{walletId}/chage-funds`
-
+```
 [Operation] Add/Remove
-
 [Amount] Amount
-
 [Timestamp] DateTime of the operation
+{
+  "operation": Add, #Add/Remove
+  "amount": 55, 
+  "timestamp": "2024-07-19T07:13:21.133Z"
+}
 
+```
 Example response:
 ```
 {
