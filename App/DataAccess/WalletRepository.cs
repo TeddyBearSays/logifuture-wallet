@@ -1,19 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WalletSytem.BusinessLayer.Models;
+using WalletSytem.Models;
 
 namespace WalletSytem.DataAccess;
 
 public interface IWalletRepository
 {
-    Task<Wallet> GetWalletAsync(Guid walletId);
-    Task AddWalletAsync(Wallet wallet);
+    Task<Wallet> GetWalletAsync(long walletId);
+    Task<Wallet> AddWalletAsync(UserDTO user, string currecny);
     Task UpdateWalletAsync(Wallet wallet);
-    Task AddTransactionAsync(Transaction transaction);
-    Task CommitTransactionAsync(Transaction transaction);
-    Task<List<Wallet>> GetAllWalletsAsync(Guid userId);
-    Task<bool> HasTransactionAsync(Transaction transaction);
-    Task<List<Transaction>> GetWalletTransactionsAsync(Guid walletId);
-    Task FreezeWalletAsync(Guid walletId);
+    Task<List<Wallet>> GetAllWalletsAsync(string userId);
+    Task FreezeWalletAsync(long walletId);
+    Task FreezeUserAsync(string userId);
+
 }
 
 public class WalletRepository : IWalletRepository
@@ -26,7 +25,7 @@ public class WalletRepository : IWalletRepository
     }
 
     
-    public async Task<List<Wallet>> GetAllWalletsAsync(Guid userId)
+    public async Task<List<Wallet>> GetAllWalletsAsync(string userId)
     {
         var user  =  await _context.Users.FindAsync(userId);
         if (user == null)
@@ -34,16 +33,35 @@ public class WalletRepository : IWalletRepository
         return user.Wallets.ToList();
     }
 
-    public async Task AddWalletAsync(Wallet wallet)
+    public async Task<Wallet> AddWalletAsync(UserDTO userDTO, string currecny)
     {
-        var user = await _context.Users.FindAsync(wallet.UserId);
-        if(user == null)
+        var id = userDTO.CalculateHash();
+        var user = await _context.Users.FindAsync(id);
+        
+        if (user == null)
         {
-            user = new User { Id = Guid.NewGuid() };
+            user = new User
+            {
+                Username = userDTO.Username,
+                Email = userDTO.Email,
+                DateCreated = userDTO.DateCreated,
+                PasswordHash = userDTO.PasswordHash,
+                Id = id,
+                Wallets = new List<Wallet>()
+            };
+            
             _context.Users.Add(user);
         }
-        await _context.Wallets.AddAsync(wallet);
+        if (user.Frozen)
+        {
+            throw new InvalidOperationException("User is frozen");
+        }
+
+        var wallet = new Wallet { Balance = 0, Currency = currecny, User = user };
+        user.Wallets.Add(wallet);
+
         await _context.SaveChangesAsync();
+        return wallet;
     }
 
     public async Task UpdateWalletAsync(Wallet wallet)
@@ -54,7 +72,6 @@ public class WalletRepository : IWalletRepository
 
     public async Task AddTransactionAsync(Transaction transaction)
     {
-        transaction.CalculateHash();
         await _context.Transactions.AddAsync(transaction);
         await _context.SaveChangesAsync();
     }
@@ -70,19 +87,21 @@ public class WalletRepository : IWalletRepository
         return result == null;
     }
 
-    public async Task<List<Transaction>> GetWalletTransactionsAsync(Guid walletId)
+    public async Task<List<Transaction>> GetWalletTransactionsAsync(long walletId)
     {
         var transactions =  _context.Transactions.Where(x => x.WalletId == walletId);
         return await transactions.ToListAsync();
     }
 
-    public async Task<Wallet> GetWalletAsync(Guid walletId)
+    public async Task<Wallet> GetWalletAsync(long walletId)
     {
-        return await _context.Wallets.FindAsync(walletId);
+
+        return await _context.Wallets.Include(i => i.User)
+            .FirstAsync(x=>x.Id == walletId);
         
     }
 
-    public async Task FreezeWalletAsync(Guid walletId)
+    public async Task FreezeWalletAsync(long walletId)
     {
         var wallet =  await _context.Wallets.FindAsync(walletId);
         if (wallet != null)
@@ -90,6 +109,16 @@ public class WalletRepository : IWalletRepository
             throw new InvalidOperationException();
         }
         wallet.Frozen = true;
+        await _context.SaveChangesAsync();
+    }
+    public async Task FreezeUserAsync(string userId)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user != null)
+        {
+            throw new InvalidOperationException();
+        }
+        user.Frozen = true;
         await _context.SaveChangesAsync();
     }
 }
