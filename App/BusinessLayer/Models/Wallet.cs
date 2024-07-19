@@ -1,9 +1,16 @@
-﻿namespace WalletSytem.BusinessLayer.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace WalletSytem.BusinessLayer.Models;
 
 public class Wallet
 {
-    public Guid Id { get; set; }
-    public Guid UserId { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
+    public long Id { get; set; }
+    public string UserId { get; set; }
+    public virtual User User { get; set; }
     
     public decimal Balance { get; set; }
     public string Currency { get; set; }
@@ -11,22 +18,7 @@ public class Wallet
 }
 
 
-public class User
-{
-    public Guid Id { get; set; }
-  
-    public ICollection<Wallet> Wallets { get; set; }
-}
-
-
 public enum Operation
 {
     Add, Remove
-}
-public class Funds
-{
-    public Operation Operation { get; set; }
-    public decimal Amount { get; set; }
-    public DateTime Timestamp { get; }
-
 }

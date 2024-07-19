@@ -27,6 +27,11 @@ public class WalletDbContext : DbContext
             .WithMany()
             .HasForeignKey(t => t.WalletId);
 
+        modelBuilder.Entity<Wallet>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(t => t.UserId);
+
         modelBuilder.Entity<User>()
                 .HasMany(u => u.Wallets)
                 .WithOne()

@@ -3,18 +3,26 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace WalletSytem.BusinessLayer.Models;
-
-public class Transaction
+interface IValueObject<T>
 {
-    public string Id { get; set; }
-    public Guid WalletId { get; set; }
+    public T Id { get; set; }
+
+}
+public class Transaction: IValueObject<string>
+{
+    private string id;
+
+    public string Id { get { return id ?? (id = CalculateHash()); }  set => id = value; }
+
+    public long WalletId { get; set; }
+
     public decimal BalanceBefore { get; set; }
     public decimal BalanceAfter { get; set; }
     public DateTime Timestamp { get; set; }
     public Guid ProviderId { get; internal set; }
     public bool Commited { get; internal set; }
 
-    public void CalculateHash()
+    public string CalculateHash()
     {
         using (SHA256 sha256 = SHA256.Create())
         {
@@ -25,8 +33,7 @@ public class Transaction
             {
                 builder.Append(b.ToString("x2"));
             }
-            Id= builder.ToString();
+            return builder.ToString();
         }
-       
     }
 }

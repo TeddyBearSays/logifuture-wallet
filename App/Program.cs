@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 services.AddScoped<IWalletRepository, WalletRepository>();
 services.AddScoped<IWalletService, WalletService>();
+services.AddScoped<TransactionRepository, TransactionRepository>();
+
 services.AddSingleton<ICorrelationIdProvider, CorrelationIdProvider>();
 
 services.AddControllers();
